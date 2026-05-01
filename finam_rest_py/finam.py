@@ -75,7 +75,7 @@ class Finam:
         return self._session
 
     def _headers(self):
-        return {"Authorization": f"{self._jwt_token_dict[self._user_token]}",
+        return {"Authorization": f"Bearer {self._jwt_token_dict[self._user_token]}",
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'}
 

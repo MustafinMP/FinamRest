@@ -48,7 +48,7 @@ class Transaction:
     category: TransactionCategory
     timestamp: datetime
     symbol: str
-    change: MoneyModel
+    change: Optional[MoneyModel]
     trade: Optional[AccountTrade, None]
     # такое дублирование поля category было в API, в будущем оно будет убрано из библиотеки (но не факт, что из API тоже)
     transaction_category: TransactionCategory
@@ -62,7 +62,7 @@ class Transaction:
             category=TransactionCategory.from_str(transaction['category']),
             timestamp=formatted_datetime(transaction['timestamp']),
             symbol=transaction['symbol'],
-            change=MoneyModel.from_dict(transaction['change']),
+            change=MoneyModel.from_dict(transaction['change']) if 'change' in transaction.keys() else None,
             trade=AccountTrade.from_dict(transaction['trade']) if 'trade' in transaction.keys() else None,
             transaction_category=TransactionCategory.from_str(transaction['transaction_category']),
             transaction_name=transaction['transaction_name'],
