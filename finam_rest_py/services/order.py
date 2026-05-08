@@ -57,6 +57,8 @@ class OrderService(AsyncBaseService):
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 
+    async def place_sl_tp_order(self) -> None: ...
+
     async def cancel_order(self, order_id: str) -> OrderInfo:
         """Отменяет размещенную заявку.
 

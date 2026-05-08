@@ -22,6 +22,21 @@ class AssetService(AsyncBaseService):
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 
+    async def get_all_assets(self) -> list[Asset]:
+        """Получает список инструментов (в том числе архивных), их описание.
+
+                Returns:
+                    list[Asset]: список всех инструментов.
+
+                Raises:
+                    FinamResponseFailureException: если произошла ошибка запроса к серверу.
+                """
+        response = await self._session.get('assets/all')
+        if response.status_code == 200:
+            return [Asset.from_dict(a) for a in response.json()['assets']]
+        raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
+                                            text=response.text)
+
     async def get_clock(self) -> datetime:
         """Получает текущее время на сервере (локализованное).
 
