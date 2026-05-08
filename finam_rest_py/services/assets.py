@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from finam_rest_py.exceptions import FinamResponseFailureException
-from finam_rest_py.models import Exchange, ScheduleSession, Asset, FullAsset, Option, AssetParams
+from finam_rest_py.models import Exchange, ScheduleSession, Asset, FullAsset, Option, AssetParams, Constituent
 from finam_rest_py.models.converters import formatted_datetime
 from finam_rest_py.services.base_service import AsyncBaseService
 
@@ -49,6 +49,21 @@ class AssetService(AsyncBaseService):
         response = await self._session.get('assets/clock')
         if response.status_code == 200:
             return formatted_datetime(response.json()['timestamp'])
+        raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
+                                            text=response.text)
+
+    async def get_constituents(self, index_symbol: str) -> None:
+        """Получает список инструментов (в том числе архивных), их описание.
+
+        Returns:
+            list[Asset]: список всех инструментов.
+
+        Raises:
+            FinamResponseFailureException: если произошла ошибка запроса к серверу.
+        """
+        response = await self._session.get(f'assets/{index_symbol}/constituents')
+        if response.status_code == 200:
+            return [Constituent.from_dict(c) for c in response.json()['constituents']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 
