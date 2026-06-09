@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from finam_rest_py.models.account_models import AccountTrade
+from finam_rest_py.models.account_models import Trade
 from finam_rest_py.models.converters import formatted_datetime
 from finam_rest_py.models.money import MoneyModel
 
@@ -49,7 +49,7 @@ class Transaction:
     timestamp: datetime
     symbol: str
     change: Optional[MoneyModel]
-    trade: Optional[AccountTrade, None]
+    trade: Optional[Trade, None]
     # такое дублирование поля category было в API, в будущем оно будет убрано из библиотеки (но не факт, что из API тоже)
     transaction_category: TransactionCategory
     transaction_name: str
@@ -63,7 +63,7 @@ class Transaction:
             timestamp=formatted_datetime(transaction['timestamp']),
             symbol=transaction['symbol'],
             change=MoneyModel.from_dict(transaction['change']) if 'change' in transaction.keys() else None,
-            trade=AccountTrade.from_dict(transaction['trade']) if 'trade' in transaction.keys() else None,
+            trade=Trade.from_dict(transaction['trade']) if 'trade' in transaction.keys() else None,
             transaction_category=TransactionCategory.from_str(transaction['transaction_category']),
             transaction_name=transaction['transaction_name'],
             change_qty=float(transaction['change_qty']) if 'change_qty' in transaction.keys() else None

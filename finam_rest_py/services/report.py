@@ -15,7 +15,7 @@ class ReportService(AsyncBaseService):
             long_form (bool): длинный формат отчета, по умолчанию False (короткий формат)
 
         Returns:
-            report_id (int): ID отчета на сервере.
+            str: ID отчета на сервере.
 
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.

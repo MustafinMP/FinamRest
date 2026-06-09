@@ -53,6 +53,7 @@ class OrderService(AsyncBaseService):
             order.account_id = self._base_module.get_account()
         response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
         if response.status_code == 200:
+            print(response.json())
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
@@ -65,7 +66,7 @@ class OrderService(AsyncBaseService):
             sl_price: float,
             tp_quantity: float,
             tp_price: float,
-            valid_before: OrderValidBefore
+            valid_before: OrderValidBefore = OrderValidBefore.VALID_BEFORE_GOOD_TILL_CANCEL
     ) -> None:
         """Размещает заявку на бирже.
 
@@ -82,14 +83,20 @@ class OrderService(AsyncBaseService):
         params = {
             'symbol': symbol,
             'side': side.value,
-            'sl_quantity': sl_quantity,
-            'sl_price': sl_price,
-            'tp_quantity': tp_quantity,
-            'tp_price': tp_price,
-            'valid_before': valid_before.value
+            'quantity_sl': {'value': str(sl_quantity)},
+            'sl_price': {'value': str(sl_price)},
+            'quantity_tp': {'value': str(tp_quantity)},
+            'tp_price': {'value': str(tp_price)},
+            'valid_before': valid_before.value,
+            # "tp_guard_spread": {
+            #     "value": "0"
+            # },
+            # "tp_spread_measure": "TP_SPREAD_MEASURE_UNDEFINED",
+            # "client_order_id": "string",
         }
-        response = await self._session.post(f'accounts/{self._account_id}/orders', params=params)
+        response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
         if response.status_code == 200:
+            print(response.json())
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)

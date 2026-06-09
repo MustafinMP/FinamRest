@@ -4,3 +4,4 @@ from finam_rest_py.models.order_models.order_stop_condition import OrderStopCond
 from finam_rest_py.models.order_models.order_type import OrderType
 from finam_rest_py.models.order_models.order_type_in_force import OrderTypeInForce
 from finam_rest_py.models.order_models.order_valid_before import OrderValidBefore
+from finam_rest_py.models.order_models.sltp_order import SLTPOrder

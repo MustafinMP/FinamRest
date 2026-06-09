@@ -4,11 +4,11 @@ from finam_rest_py.services.base_service import AsyncBaseService
 
 
 class MetricsService(AsyncBaseService):
-    async def get_usage_metrics(self) -> QuotaUsageMetrics:
+    async def get_usage_metrics(self, as_dict: bool = False) -> QuotaUsageMetrics:
         """получает метрики об использовании API.
 
         Returns:
-            list[QuotaUsageMetrics]: данные о различных метриках.
+            QuotaUsageMetrics: данные о различных метриках.
 
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.

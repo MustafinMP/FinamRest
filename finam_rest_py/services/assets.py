@@ -52,11 +52,11 @@ class AssetService(AsyncBaseService):
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 
-    async def get_constituents(self, index_symbol: str) -> None:
-        """Получает список инструментов (в том числе архивных), их описание.
+    async def get_constituents(self, index_symbol: str) -> list[Constituent]:
+        """Получает состав биржевого индекса по его символу.
 
         Returns:
-            list[Asset]: список всех инструментов.
+            list[Constituent]: состав индекса.
 
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
