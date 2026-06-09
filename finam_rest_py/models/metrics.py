@@ -33,3 +33,13 @@ class QuotaUsageMetrics:
         return QuotaUsageMetrics(
             quotas=[QuotaUsageMetric.from_dict(q) for q in quota_usage_metrics_dict['quotas']]
         )
+
+    def __iter__(self):
+        for quota in self.quotas:
+            yield quota
+
+    def as_dict(self):
+        return {
+            metric.name: metric
+            for metric in self.quotas
+        }

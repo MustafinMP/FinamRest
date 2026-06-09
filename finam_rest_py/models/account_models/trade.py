@@ -8,7 +8,7 @@ from finam_rest_py.models.trade_side import TradeSide
 
 
 @dataclass
-class AccountTrade:
+class Trade:
     trade_id: str
     symbol: str
     price: float
@@ -19,8 +19,8 @@ class AccountTrade:
     account_id: str
 
     @classmethod
-    def from_dict(cls, response_dict: dict) -> AccountTrade:
-        return AccountTrade(
+    def from_dict(cls, response_dict: dict) -> Trade:
+        return Trade(
             trade_id=response_dict['trade_id'],
             symbol=response_dict['symbol'],
             price=float(response_dict['price']['value']),

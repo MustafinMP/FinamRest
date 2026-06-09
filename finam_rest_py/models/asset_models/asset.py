@@ -28,7 +28,7 @@ class Asset:
             mic=asset_dict['mic'],
             isin=asset_dict['isin'],
             type=asset_dict['type'],
-            name=asset_dict['name'],
+            name=asset_dict['name']
         )
 
 

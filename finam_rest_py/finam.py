@@ -11,6 +11,7 @@ from finam_rest_py.services.assets import AssetService
 from finam_rest_py.services.market import MarketService
 from finam_rest_py.services.metrics import MetricsService
 from finam_rest_py.services.order import OrderService
+from finam_rest_py.services.report import ReportService
 
 
 class Finam:
@@ -23,6 +24,7 @@ class Finam:
         self.orders = OrderService(self)
         self.market = MarketService(self)
         self.metrics = MetricsService(self)
+        self.report = ReportService(self)
 
         self._account_id = account_id
         self._user_token = user_token
@@ -75,7 +77,7 @@ class Finam:
         return self._session
 
     def _headers(self):
-        return {"Authorization": f"{self._jwt_token_dict[self._user_token]}",
+        return {"Authorization": f"Bearer {self._jwt_token_dict[self._user_token]}",
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'}
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from finam_rest_py.exceptions import FinamResponseFailureException
-from finam_rest_py.models import Account, AccountTrade, Transaction
+from finam_rest_py.models import Account, Trade, Transaction
 from finam_rest_py.services.base_service import AsyncBaseService
 
 
@@ -24,7 +24,7 @@ class AccountService(AsyncBaseService):
     async def get_trades(self,
                          end_time: datetime,
                          start_time: datetime = None,
-                         limit: int = None) -> list[AccountTrade]:
+                         limit: int = None) -> list[Trade]:
         """Получает истории по сделкам аккаунта.
 
         Args:
@@ -33,7 +33,7 @@ class AccountService(AsyncBaseService):
             limit (Optional[int]): лимит количества сделок.
 
         Returns:
-            list[AccountTrade]: список сделок по аккаунту.
+            list[Trade]: список сделок по аккаунту.
 
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
@@ -46,7 +46,7 @@ class AccountService(AsyncBaseService):
 
         response = await self._session.get(f'accounts/{self._account_id}/trades', params=params)
         if response.status_code == 200:
-            return [AccountTrade.from_dict(t) for t in response.json()['trades']]
+            return [Trade.from_dict(t) for t in response.json()['trades']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 

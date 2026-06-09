@@ -1,5 +1,5 @@
 from finam_rest_py.exceptions import FinamResponseFailureException
-from finam_rest_py.models import Order, OrderInfo
+from finam_rest_py.models import Order, OrderInfo, TradeSide, OrderValidBefore
 from finam_rest_py.services.base_service import AsyncBaseService
 
 
@@ -53,6 +53,50 @@ class OrderService(AsyncBaseService):
             order.account_id = self._base_module.get_account()
         response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
         if response.status_code == 200:
+            print(response.json())
+            return OrderInfo.from_dict(response.json())
+        raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
+                                            text=response.text)
+
+    async def place_sl_tp_order(
+            self,
+            symbol: str,
+            side: TradeSide,
+            sl_quantity: float,
+            sl_price: float,
+            tp_quantity: float,
+            tp_price: float,
+            valid_before: OrderValidBefore = OrderValidBefore.VALID_BEFORE_GOOD_TILL_CANCEL
+    ) -> None:
+        """Размещает заявку на бирже.
+
+        Args:
+
+
+        Returns:
+            OrderInfo: информация о размещенной заявке.
+
+        Raises:
+            FinamResponseFailureException: если произошла ошибка запроса к серверу.
+        """
+
+        params = {
+            'symbol': symbol,
+            'side': side.value,
+            'quantity_sl': {'value': str(sl_quantity)},
+            'sl_price': {'value': str(sl_price)},
+            'quantity_tp': {'value': str(tp_quantity)},
+            'tp_price': {'value': str(tp_price)},
+            'valid_before': valid_before.value,
+            # "tp_guard_spread": {
+            #     "value": "0"
+            # },
+            # "tp_spread_measure": "TP_SPREAD_MEASURE_UNDEFINED",
+            # "client_order_id": "string",
+        }
+        response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
+        if response.status_code == 200:
+            print(response.json())
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
