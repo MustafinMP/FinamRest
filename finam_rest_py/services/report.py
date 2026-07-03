@@ -28,6 +28,9 @@ class ReportService(AsyncBaseService):
             'account_id': self._account_id
         }
         response = await self._session.post('report', params=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.post('report', params=params)
         if response.status_code == 200:
             return response.json()['report_id']
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -35,6 +38,9 @@ class ReportService(AsyncBaseService):
 
     async def get_report(self, report_id: str):
         response = await self._session.get(f'report/{report_id}/info')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'report/{report_id}/info')
         if response.status_code == 200:
             return Report.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,

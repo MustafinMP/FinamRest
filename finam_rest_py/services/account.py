@@ -16,6 +16,9 @@ class AccountService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get(f'accounts/{self._account_id}')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'accounts/{self._account_id}')
         if response.status_code == 200:
             return Account.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -45,6 +48,9 @@ class AccountService(AsyncBaseService):
             params['limit'] = limit
 
         response = await self._session.get(f'accounts/{self._account_id}/trades', params=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'accounts/{self._account_id}/trades', params=params)
         if response.status_code == 200:
             return [Trade.from_dict(t) for t in response.json()['trades']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -74,6 +80,9 @@ class AccountService(AsyncBaseService):
             params['limit'] = limit
 
         response = await self._session.get(f'accounts/{self._account_id}/transactions', params=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'accounts/{self._account_id}/transactions', params=params)
         if response.status_code == 200:
             return [Transaction.from_dict(t) for t in response.json()['transactions']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
