@@ -13,7 +13,10 @@ class MetricsService(AsyncBaseService):
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
-        response = await self._session.get(f'usage')
+        response = await self._session.get('usage')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get('usage')
         if response.status_code == 200:
             return QuotaUsageMetrics.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,

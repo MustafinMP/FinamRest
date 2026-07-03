@@ -17,6 +17,10 @@ class OrderService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get(f'accounts/{self._account_id}/orders/{order_id}')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'accounts/{self._account_id}/orders/{order_id}')
+
         if response.status_code == 200:
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -32,6 +36,9 @@ class OrderService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get(f'accounts/{self._account_id}/orders')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'accounts/{self._account_id}/orders')
         if response.status_code == 200:
             return [OrderInfo.from_dict(o) for o in response.json()['orders']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -52,8 +59,10 @@ class OrderService(AsyncBaseService):
         if order.account_id is None:
             order.account_id = self._base_module.get_account()
         response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
         if response.status_code == 200:
-            print(response.json())
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
@@ -61,7 +70,7 @@ class OrderService(AsyncBaseService):
     async def place_sl_tp_order(
             self,
             symbol: str,
-            side: TradeSide,
+            side: TradeSide | str,
             sl_quantity: float,
             sl_price: float,
             tp_quantity: float,
@@ -79,7 +88,13 @@ class OrderService(AsyncBaseService):
         Raises:
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
-
+        if isinstance(side, str):
+            if side == 'long' or side == 'LONG':
+                side = TradeSide.LONG
+            elif side == 'short' or side == 'SHORT':
+                side = TradeSide.SHORT
+            else:
+                raise ValueError
         params = {
             'symbol': symbol,
             'side': side.value,
@@ -95,8 +110,10 @@ class OrderService(AsyncBaseService):
             # "client_order_id": "string",
         }
         response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
         if response.status_code == 200:
-            print(response.json())
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
@@ -114,6 +131,9 @@ class OrderService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.delete(f'accounts/{self._account_id}/orders/{order_id}')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.delete(f'accounts/{self._account_id}/orders/{order_id}')
         if response.status_code == 200:
             return OrderInfo.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,

@@ -17,6 +17,9 @@ class AssetService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get('assets')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get('assets')
         if response.status_code == 200:
             return [Asset.from_dict(a) for a in response.json()['assets']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -32,6 +35,9 @@ class AssetService(AsyncBaseService):
                     FinamResponseFailureException: если произошла ошибка запроса к серверу.
                 """
         response = await self._session.get('assets/all')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get('assets/all')
         if response.status_code == 200:
             return [Asset.from_dict(a) for a in response.json()['assets']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -47,6 +53,9 @@ class AssetService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get('assets/clock')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get('assets/clock')
         if response.status_code == 200:
             return formatted_datetime(response.json()['timestamp'])
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -62,6 +71,9 @@ class AssetService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get(f'assets/{index_symbol}/constituents')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'assets/{index_symbol}/constituents')
         if response.status_code == 200:
             return [Constituent.from_dict(c) for c in response.json()['constituents']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -77,6 +89,9 @@ class AssetService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get('exchanges')
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get('exchanges')
         if response.status_code == 200:
             return [Exchange.from_dict(e) for e in response.json()['exchanges']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -96,6 +111,10 @@ class AssetService(AsyncBaseService):
         """
         response = await self._session.get(f'assets/{symbol}',
                                            params={'symbol': symbol, 'account_id': self._account_id})
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'assets/{symbol}',
+                                               params={'symbol': symbol, 'account_id': self._account_id})
         if response.status_code == 200:
             return FullAsset.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -116,6 +135,9 @@ class AssetService(AsyncBaseService):
         """
         params = {'symbol': symbol, 'account_id': account_id if account_id else self._account_id}
         response = await self._session.get(f'assets/{symbol}/params', params=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'assets/{symbol}/params', params=params)
         if response.status_code == 200:
             return AssetParams.from_dict(response.json())
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -146,6 +168,9 @@ class AssetService(AsyncBaseService):
             params['expiration_date.month'] = expiration_date.month
             params['expiration_date.day'] = expiration_date.day
         response = await self._session.get(f'assets/{underlying_symbol}/options', params=params)
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'assets/{underlying_symbol}/options', params=params)
         if response.status_code == 200:
             return [Option.from_dict(op) for op in response.json()['options']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
@@ -165,6 +190,9 @@ class AssetService(AsyncBaseService):
             FinamResponseFailureException: если произошла ошибка запроса к серверу.
         """
         response = await self._session.get(f'assets/{symbol}/schedule', params={'symbol': symbol})
+        if response.status_code == 401 or response.status_code == 500:
+            await self._base_module.refresh_session()
+            response = await self._session.get(f'assets/{symbol}/schedule', params={'symbol': symbol})
         if response.status_code == 200:
             sessions = [ScheduleSession.from_dict(s) for s in response.json()['sessions']]
             if only_today:
