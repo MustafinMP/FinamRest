@@ -50,18 +50,20 @@ class Order:
     @classmethod
     def from_dict(cls, order_dict: dict) -> Order:
         return Order(
-            account_id=order_dict['account_id'],
+            account_id=order_dict['account_id'] if 'account_id' in order_dict else order_dict['accountId'],
             symbol=order_dict['symbol'],
             quantity=float(order_dict['quantity']['value']),
             side=TradeSide.from_str(order_dict['side']),
             type=OrderType.from_str(order_dict['type']),
-            time_in_force=OrderTypeInForce.from_str(order_dict['time_in_force']),
-            limit_price=float(order_dict['limit_price']['value']) if 'limit_price' in order_dict.keys() else None,
-            stop_price=float(order_dict['stop_price']['value']) if 'stop_price' in order_dict.keys() else None,
-            stop_condition=OrderStopCondition.from_str(order_dict.get('stop_condition', None)),
-            client_order_id=order_dict.get('client_order_id', None),
-            valid_before=OrderValidBefore.from_str(order_dict.get('valid_before', None)),
+            time_in_force=OrderTypeInForce.from_str(order_dict['time_in_force']) if 'time_in_force' in order_dict
+            else OrderTypeInForce.from_str(order_dict['timeInForce']) if 'timeInForce' in order_dict else None,
+            limit_price=float(order_dict['limit_price']['value']) if 'limit_price' in order_dict.keys()
+            else float(order_dict['limitPrice']['value']) if 'limitPrice' in order_dict.keys() else None,
+            stop_price=float(order_dict['stop_price']['value']) if 'stop_price' in order_dict.keys()
+            else float(order_dict['stopPrice']['value']) if 'stopPrice' in order_dict.keys() else None,
+            stop_condition=OrderStopCondition.from_str(
+                order_dict.get('stop_condition', order_dict.get('stopCondition', None))),
+            client_order_id=order_dict.get('client_order_id', order_dict.get('clientOrderId', None)),
+            valid_before=OrderValidBefore.from_str(order_dict.get('valid_before', order_dict.get('validBefore', None))),
             comment=order_dict.get('comment', None),
         )
-
-

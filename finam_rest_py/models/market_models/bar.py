@@ -8,7 +8,7 @@ from finam_rest_py.models.converters import formatted_datetime
 
 @dataclass
 class Bar:
-    timestamp: datetime
+    datetime: datetime
     open: float
     high: float
     low: float
@@ -18,7 +18,7 @@ class Bar:
     @classmethod
     def from_dict(cls, bar_dict: dict) -> Bar:
         return Bar(
-            timestamp=formatted_datetime(bar_dict['timestamp']),
+            datetime=formatted_datetime(bar_dict['timestamp']),
             open=float(bar_dict['open']['value']),
             high=float(bar_dict['high']['value']),
             low=float(bar_dict['low']['value']),

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from finam_rest_py.exceptions import FinamResponseFailureException
-from finam_rest_py.models import Account, Trade, Transaction
+from finam_rest_py.models import Account, AssetTrade, Transaction
 from finam_rest_py.services.base_service import AsyncBaseService
 
 
@@ -17,7 +17,7 @@ class AccountService(AsyncBaseService):
         """
         response = await self._session.get(f'accounts/{self._account_id}')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'accounts/{self._account_id}')
         if response.status_code == 200:
             return Account.from_dict(response.json())
@@ -27,7 +27,7 @@ class AccountService(AsyncBaseService):
     async def get_trades(self,
                          end_time: datetime,
                          start_time: datetime = None,
-                         limit: int = None) -> list[Trade]:
+                         limit: int = None) -> list[AssetTrade]:
         """Получает истории по сделкам аккаунта.
 
         Args:
@@ -49,10 +49,10 @@ class AccountService(AsyncBaseService):
 
         response = await self._session.get(f'accounts/{self._account_id}/trades', params=params)
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'accounts/{self._account_id}/trades', params=params)
         if response.status_code == 200:
-            return [Trade.from_dict(t) for t in response.json()['trades']]
+            return [AssetTrade.from_dict(t) for t in response.json()['trades']]
         raise FinamResponseFailureException(status_code=response.status_code, reason=response.reason_phrase,
                                             text=response.text)
 
@@ -81,7 +81,7 @@ class AccountService(AsyncBaseService):
 
         response = await self._session.get(f'accounts/{self._account_id}/transactions', params=params)
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'accounts/{self._account_id}/transactions', params=params)
         if response.status_code == 200:
             return [Transaction.from_dict(t) for t in response.json()['transactions']]
