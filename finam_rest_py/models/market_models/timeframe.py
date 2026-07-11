@@ -68,3 +68,19 @@ class TimeFrame(Enum):
             case 'TIME_FRAME_MN', 'MN', 'mn': return cls.TIME_FRAME_MN
             case 'TIME_FRAME_QR', 'QR', 'qr': return cls.TIME_FRAME_QR
             case _: raise ValueError(f'Invalid timeframe string {string}')
+
+    def to_str(self) -> str:
+        return {
+            1: 'TIME_FRAME_M1',
+            5: 'TIME_FRAME_M5',
+            9: 'TIME_FRAME_M15',
+            11: 'TIME_FRAME_M30',
+            12: 'TIME_FRAME_H1',
+            13: 'TIME_FRAME_H2',
+            15: 'TIME_FRAME_H4',
+            17: 'TIME_FRAME_H8',
+            19: 'TIME_FRAME_D',
+            20: 'TIME_FRAME_W',
+            21: 'TIME_FRAME_MN',
+            22: 'TIME_FRAME_QR',
+        }[self.value]

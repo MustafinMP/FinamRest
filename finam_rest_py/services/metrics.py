@@ -15,7 +15,7 @@ class MetricsService(AsyncBaseService):
         """
         response = await self._session.get('usage')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get('usage')
         if response.status_code == 200:
             return QuotaUsageMetrics.from_dict(response.json())

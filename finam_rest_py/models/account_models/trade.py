@@ -21,13 +21,13 @@ class Trade:
     @classmethod
     def from_dict(cls, response_dict: dict) -> Trade:
         return Trade(
-            trade_id=response_dict['trade_id'],
+            trade_id=response_dict['trade_id'] if 'trade_id' in response_dict else response_dict['tradeId'],
             symbol=response_dict['symbol'],
             price=float(response_dict['price']['value']),
             size=float(response_dict['size']['value']),
             side=TradeSide.from_str(response_dict['side']),
             timestamp=formatted_datetime(response_dict['timestamp']),
-            order_id=response_dict['order_id'],
-            account_id=response_dict['account_id']
+            order_id=response_dict['order_id'] if 'order_id' in response_dict else response_dict['orderId'],
+            account_id=response_dict['account_id'] if 'account_id' in response_dict else response_dict['accountId']
         )
 

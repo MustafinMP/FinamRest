@@ -29,7 +29,7 @@ class ReportService(AsyncBaseService):
         }
         response = await self._session.post('report', params=params)
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.post('report', params=params)
         if response.status_code == 200:
             return response.json()['report_id']
@@ -39,7 +39,7 @@ class ReportService(AsyncBaseService):
     async def get_report(self, report_id: str):
         response = await self._session.get(f'report/{report_id}/info')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'report/{report_id}/info')
         if response.status_code == 200:
             return Report.from_dict(response.json())

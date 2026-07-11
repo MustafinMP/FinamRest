@@ -24,12 +24,12 @@ class SLTPOrder:
     def from_dict(cls, dct: dict) -> SLTPOrder:
         return cls(
             symbol=dct.get('symbol'),
-            client_order_id=dct['client_order_id'],
-            sl_quantity=dct['quantity_sl']['value'],
-            tp_quantity=dct['quantity_tp']['value'],
-            sl_price=dct['sl_price']['value'],
-            tp_price=dct['tp_price']['value'],
+            client_order_id=dct['client_order_id'] if 'client_order_id' in dct.keys() else dct['clientOrderId'],
+            sl_quantity=dct['quantity_sl']['value'] if 'quantitySl' in dct.keys() else dct['quantitySl']['value'],
+            tp_quantity=dct['quantity_tp']['value'] if 'quantity_tp' in dct.keys() else dct['quantityTp']['value'],
+            sl_price=dct['sl_price']['value'] if 'slPrice' in dct.keys() else dct['slPrice']['value'],
+            tp_price=dct['tp_price']['value'] if 'tpPrice' in dct.keys() else dct['tpPrice']['value'],
             side=TradeSide.from_str(dct['side']),
             comment=dct.get('comment'),
-            account_id=dct.get('account_id'),
+            account_id=dct.get('account_id') if 'accountId' in dct.keys() else dct['accountId'],
         )

@@ -18,7 +18,7 @@ class OrderService(AsyncBaseService):
         """
         response = await self._session.get(f'accounts/{self._account_id}/orders/{order_id}')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'accounts/{self._account_id}/orders/{order_id}')
 
         if response.status_code == 200:
@@ -37,7 +37,7 @@ class OrderService(AsyncBaseService):
         """
         response = await self._session.get(f'accounts/{self._account_id}/orders')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'accounts/{self._account_id}/orders')
         if response.status_code == 200:
             return [OrderInfo.from_dict(o) for o in response.json()['orders']]
@@ -60,7 +60,7 @@ class OrderService(AsyncBaseService):
             order.account_id = self._base_module.get_account()
         response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.post(f'accounts/{self._account_id}/orders', json=order.to_dict())
         if response.status_code == 200:
             return OrderInfo.from_dict(response.json())
@@ -111,7 +111,7 @@ class OrderService(AsyncBaseService):
         }
         response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.post(f'accounts/{self._account_id}/sltp-orders', json=params)
         if response.status_code == 200:
             return OrderInfo.from_dict(response.json())
@@ -132,7 +132,7 @@ class OrderService(AsyncBaseService):
         """
         response = await self._session.delete(f'accounts/{self._account_id}/orders/{order_id}')
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.delete(f'accounts/{self._account_id}/orders/{order_id}')
         if response.status_code == 200:
             return OrderInfo.from_dict(response.json())

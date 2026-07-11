@@ -169,7 +169,7 @@ class AssetService(AsyncBaseService):
             params['expiration_date.day'] = expiration_date.day
         response = await self._session.get(f'assets/{underlying_symbol}/options', params=params)
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'assets/{underlying_symbol}/options', params=params)
         if response.status_code == 200:
             return [Option.from_dict(op) for op in response.json()['options']]
@@ -191,7 +191,7 @@ class AssetService(AsyncBaseService):
         """
         response = await self._session.get(f'assets/{symbol}/schedule', params={'symbol': symbol})
         if response.status_code == 401 or response.status_code == 500:
-            await self._base_module.refresh_session()
+            await self._session_manager.refresh_session()
             response = await self._session.get(f'assets/{symbol}/schedule', params={'symbol': symbol})
         if response.status_code == 200:
             sessions = [ScheduleSession.from_dict(s) for s in response.json()['sessions']]

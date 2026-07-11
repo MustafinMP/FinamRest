@@ -35,7 +35,7 @@ class QuoteOption:
 @dataclass
 class Quote:
     symbol: str
-    timestamp: datetime
+    datetime: datetime
     ask: float  # Аск. 0 при отсутствии активного аска
     ask_size: float  # Размер аска
     bid: float  # Бид. 0 при отсутствии активного бида
@@ -52,23 +52,25 @@ class Quote:
     option: Optional[QuoteOption | None]  # Информация об опционе
 
     @classmethod
-    def from_dict(cls, quote_dict: dict) -> Quote:
-        quote = quote_dict['quote']
+    def from_dict(cls, quote: dict) -> Quote:
         return Quote(
-            symbol=quote_dict['symbol'],
-            timestamp=formatted_datetime(quote['timestamp']),
+            symbol=quote['symbol'] if 'symbol' in quote.keys() else '',
+            datetime=formatted_datetime(quote['timestamp']),
             ask=float(quote['ask']['value']) if 'ask' in quote.keys() else 0,
-            ask_size=float(quote['ask_size']['value']) if 'ask_size' in quote.keys() else 0,
+            ask_size=float(quote['ask_size']['value']) if 'ask_size' in quote.keys()
+            else float(quote['askSize']['value']) if 'askSize' in quote.keys() else 0,
             bid=float(quote['bid']['value']) if 'bid' in quote.keys() else 0,
-            bid_size=float(quote['bid_size']['value']) if 'bid_size' in quote.keys() else 0,
-            last=float(quote['last']['value']),
-            last_size=float(quote['last_size']['value']) if 'last_size' in quote.keys() else 0,
+            bid_size=float(quote['bid_size']['value']) if 'bid_size' in quote.keys()
+            else float(quote['bidSize']['value']) if 'bidSize' in quote.keys() else 0,
+            last=float(quote['last']['value']) if 'last' in quote.keys() else 0,
+            last_size=float(quote['last_size']['value']) if 'last_size' in quote.keys()
+            else float(quote['lastSize']['value']) if 'lastSize' in quote.keys() else 0,
             volume=float(quote['volume']['value']) if 'volume' in quote.keys() else 0,
             turnover=float(quote['turnover']['value']) if 'turnover' in quote.keys() else 0,
-            open=float(quote['open']['value']),
-            high=float(quote['high']['value']),
-            low=float(quote['low']['value']),
-            close=float(quote['close']['value']),
-            change=float(quote['change']['value']),
+            open=float(quote['open']['value']) if 'open' in quote.keys() else 0,
+            high=float(quote['high']['value']) if 'high' in quote.keys() else 0,
+            low=float(quote['low']['value']) if 'low' in quote.keys() else 0,
+            close=float(quote['close']['value']) if 'close' in quote.keys() else 0,
+            change=float(quote['change']['value']) if 'change' in quote.keys() else 0,
             option=QuoteOption.from_dict(quote['option']) if 'option' in quote.keys() else None
         )
