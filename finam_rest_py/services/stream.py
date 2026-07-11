@@ -114,7 +114,7 @@ class Stream:
                 elif message['type'] == 'ERROR':
                     raise ValueError(message['error_info']['message'])
 
-    async def account_changes_stream(self, account_id: int = None) -> Iterable[None]:
+    async def account_changes_stream(self, account_id: int = None) -> Iterable[Account]:
         async with websockets.connect(self._ws_url) as ws:
             await ws.send(json.dumps({
                 "action": "SUBSCRIBE",
