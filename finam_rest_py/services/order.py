@@ -76,7 +76,7 @@ class OrderService(AsyncBaseService):
             tp_quantity: float,
             tp_price: float,
             valid_before: OrderValidBefore = OrderValidBefore.VALID_BEFORE_GOOD_TILL_CANCEL
-    ) -> None:
+    ) -> OrderInfo:
         """Размещает заявку на бирже.
 
         Args:

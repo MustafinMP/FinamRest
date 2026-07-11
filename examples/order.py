@@ -24,6 +24,7 @@ async def main():
     executed_order = await finam.orders.place_order(order)
     print(executed_order)
 
+    # Обратная сделка
     order = Order(
         symbol=symbol,
         quantity=1,
@@ -47,7 +48,7 @@ async def main():
         side=TradeSide.LONG,
         type=OrderType.ORDER_TYPE_LIMIT,
         time_in_force=OrderTypeInForce.TIME_IN_FORCE_DAY,
-        limit_price=12  # заниженная цена покупки, чтобы сделка не исполнилась
+        limit_price=13.45  # заниженная цена покупки, чтобы сделка не исполнилась
     )
 
     no_executed_order = await finam.orders.place_order(order)
@@ -58,6 +59,14 @@ async def main():
     print('Get orders example')
     orders = await finam.orders.get_orders()
     print(orders)
+
+    print('TP/SL order example')
+    tp_order = await finam.orders.place_sl_tp_order(symbol, TradeSide.SHORT,
+                                                    tp_quantity=1, tp_price=13.65,
+                                                    sl_quantity=1, sl_price=13.45)
+    print(tp_order)
+    answer = await finam.orders.cancel_order(tp_order.order_id)
+    print(answer)
 
 
 if __name__ == "__main__":
